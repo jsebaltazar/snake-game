@@ -9,15 +9,15 @@ import random as r
 '''
 
 
-        kk
 class Game:
     def __init__(self):
         scr = curses.initscr()
         curses.curs_set(False)
         height, width = scr.getmaxyx()
         window = curses.newwin(height, width, 0, 0)
-        window.keypad(True)
-        self.height, self.width, self.window = height, width, window
+        self.window = window
+        self.window.keypad(True)
+        self.height, self.width = height, width
         
     
     def set_speed(self, speed=100):
@@ -32,22 +32,23 @@ class Game:
 
     def create_food(self):
         food = [self.height/2, self.width/2]
-        self.window(int(food[0]), int(food[1]), "$")
         return food
 
     def spawn_char(self, h,w, c):
-        self.window.addch(h,w,c)
+        print(int(h),int(w))
+        self.window.addch(int(h),int(w),c)
 
 g = Game()
 g.set_speed(95)
 snake = g.create_snake()
 food = g.create_food()
+g.spawn_char(food[0], food[1], "$")
+print(g.height, g.width,g.window)
 key = curses.KEY_RIGHT
-
 
 while True:
     nxt_key = g.window.getch()
-
+    
     if(nxt_key == -1):
         key = key
     else:
@@ -63,7 +64,7 @@ while True:
     if( key == curses.KEY_UP ):
         head[0] -= 1
    
-   if( key == curses.KEY_RIGHT ):
+    if( key == curses.KEY_RIGHT ):
         head[1] += 1
 
     if( key == curses.KEY_DOWN ):
@@ -79,12 +80,10 @@ while True:
     if(snake[0] == food):
         food = None
         while food is None:
-            fd = [r.randint(1, g.height - 1, r.randint(1,g.width-1)]
-            food = fd if fd not int snake else None
+            fd = [r.randint(1, g.height - 1), r.randint(1,g.width-1)]
+            food = fd if fd not in snake else None
         g.spawn_char(food[0], food[1], "$")
     else:
         tail = snake.pop()
-        g.spawn_char(int(tail[0]), int(tail[1]), ' ')
+        g.spawn_char(int(tail[0]), int(tail[1]), '\ ')
     g.spawn_char(int(snake[0][0]), int(snake[0][1]), curses.ACS_BOARD)
-
-
